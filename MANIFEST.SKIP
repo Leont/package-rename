@@ -11,3 +11,4 @@ Package::Rename-.*
 ^\.git
 ^lib/.*\.c$
 ^lib/.*\.o$
+^t/boilerplate.t$

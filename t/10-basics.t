@@ -1,6 +1,5 @@
 #!perl -T
 
-use 5.010;
 use strict;
 use warnings;
 use Package::Rename qw/rename_package/;
@@ -24,8 +23,6 @@ rename_package('Foo', 'Bar');
 
 ok(!keys %{*Foo::}, "Foo is not defined");
 ok(keys %{*Bar::}, "Bar is defined");
-
-diag('Bar has ', join "\t", %{*Bar::});
 
 ok(!Foo->can('foo'), "Foo does not have method foo");
 ok(Bar->can('foo'), "Bar has method foo");

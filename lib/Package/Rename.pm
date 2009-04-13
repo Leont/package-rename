@@ -1,6 +1,7 @@
 package Package::Rename;
 
 use strict;
+no strict 'refs';
 use warnings;
 use Carp;
 
@@ -10,17 +11,18 @@ use vars qw/@EXPORT_OK/;
 
 our $VERSION = '0.01';
 
+*_method_changed = $] >= 5.009 ? \&mro::method_changed_in : sub { };
+
 sub copy_package {
 	my ($old_name, $new_name) = @_;
-	no strict 'refs';
-	*{"$old_name\::"} = *{"$new_name\::"};
+	%{"$new_name\::"} = %{"$old_name\::"};
 	return;
 }
 
 sub remove_package {
 	my ($old_name) = @_;
-	no strict 'refs';
-	undef *{"$old_name\::"};
+	_method_changed($old_name);
+	undef %{"$old_name\::"};
 	return;
 }
 
@@ -28,6 +30,7 @@ sub rename_package {
 	my ($old_name, $new_name) = @_;
 	copy_package($old_name, $new_name);
 	remove_package($old_name);
+	_method_changed($new_name);
 	return;
 }
 
@@ -45,7 +48,7 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-This module allows you to rename, copy or even remove packages from the perl.
+This module allows you to rename, copy or even remove packages from the perl namespace.
 
 =head1 FUNCTIONS
 
@@ -77,7 +80,7 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 PITFALLS
 
-Perl looks up functions during compile time but methods run time. This fact can be useful (see namespace::clean for an example of that), but also to confusion.
+Perl looks up functions during compile time but methods run time. This fact can be useful (see namespace::clean for an example of that), but also to confusing.
 
 =head1 SUPPORT
 
