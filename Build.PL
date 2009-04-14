@@ -10,8 +10,8 @@ my $builder = Module::Build->new(
 	build_requires      => {
 		'Test::More'    => 0,
 	},
-	recommends          => {
-		perl            => 5.010,
+	requires            => {
+		'MRO::Compat'   => 0,
 	},
 	add_to_cleanup      => [ 'Package-Rename-*' ],
 	create_makefile_pl  => 'traditional',

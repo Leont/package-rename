@@ -1,27 +1,25 @@
 package Package::Rename;
 
 use strict;
-no strict 'refs';
 use warnings;
 use Carp;
-
+use MRO::Compat;
 use base 'Exporter';
-use vars qw/@EXPORT_OK/;
-@EXPORT_OK = qw/copy_package remove_package rename_package/;
+our @EXPORT_OK = qw/copy_package remove_package rename_package/;
 
-our $VERSION = '0.01';
-
-*_method_changed = $] >= 5.009 ? \&mro::method_changed_in : sub { };
+our $VERSION = '0.02';
 
 sub copy_package {
+	no strict 'refs';
 	my ($old_name, $new_name) = @_;
 	%{"$new_name\::"} = %{"$old_name\::"};
 	return;
 }
 
 sub remove_package {
+	no strict 'refs';
 	my ($old_name) = @_;
-	_method_changed($old_name);
+	mro::method_changed_in($old_name);
 	undef %{"$old_name\::"};
 	return;
 }
@@ -30,7 +28,7 @@ sub rename_package {
 	my ($old_name, $new_name) = @_;
 	copy_package($old_name, $new_name);
 	remove_package($old_name);
-	_method_changed($new_name);
+	mro::method_changed_in($new_name);
 	return;
 }
 
@@ -44,7 +42,7 @@ Package::Rename - Rename or copy package
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
